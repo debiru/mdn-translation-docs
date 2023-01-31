@@ -1,2 +1,4 @@
 repo/*
 !repo/.gitkeep
+
+core/browser-compat-data/data.json
