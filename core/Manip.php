@@ -19,6 +19,9 @@ class Manip {
     self::init();
   }
 
+  /**
+   * リポジトリ等のファイル/ディレクトリパスをセットする
+   */
   protected function init() {
     // /public_html/core/Manip.php => /public_html
     $this->baseDir = dirname(__DIR__);
@@ -30,6 +33,10 @@ class Manip {
     $this->setBCD();
   }
 
+  /**
+   * MDN が公開している Browser-Compat-Data の json ファイルを
+   * ダウンロードして $this->bcd に展開する
+   */
   protected function setBCD() {
     if (!$this->debugSkip) {
       chdir(__DIR__);
@@ -39,6 +46,9 @@ class Manip {
     $this->bcd = Util::getJson(__DIR__.'/browser-compat-data/data.json');
   }
 
+  /**
+   * エントリポイント
+   */
   public function generateAllJson() {
     if (!$this->debugSkip) {
       $this->gitPull($this->contentRepoDir);
@@ -49,6 +59,9 @@ class Manip {
     Util::setJson($this->jsonPath, $jsonObject);
   }
 
+  /**
+   * リポジトリディレクトリ $dir で git pull を実行する
+   */
   protected function gitPull($dir) {
     if (!chdir($dir)) {
       throw new Exception(sprintf('[gitPull] chdir failed. (%s)', $dir));
@@ -63,8 +76,11 @@ class Manip {
     chdir(__DIR__);
   }
 
+  /**
+   * $targetDir に含まれる index.md を全てリストアップする
+   */
   protected function findIndexFile($targetDir) {
-    // index.md ファイルのパスをディレクトリベースでソート
+    // index.md ファイルのパスをディレクトリベースでソートしておく
     $cmd = Util::mycmd("find %s -name 'index.md' | awk '{print $0, $0}' | perl -pe 's/index.md//' | sort | awk '{print $2}'", $targetDir);
     Util::myexec($cmd, $output);
     if (count($output) === 0) {
@@ -73,6 +89,10 @@ class Manip {
     return $output;
   }
 
+  /**
+   * ['/games' => '/path/to/public_html/repo/content/files/en-us/games/index.md', ...]
+   * $targetDir にある index.md ファイルのリストを上記の形式で返す
+   */
   protected function makeIndexList($targetDir) {
     $output = $this->findIndexFile($targetDir);
 
@@ -85,6 +105,10 @@ class Manip {
     return $list;
   }
 
+  /**
+   * git log 情報を基にして $filePath に含まれる全ファイルの最終更新日を取得し
+   * $filePath の最終更新日を返す
+   */
   protected function getJaUpdated($filePath) {
     static $map = [];
 
@@ -104,6 +128,10 @@ class Manip {
     return $map[$filePath];
   }
 
+  /**
+   * メインルーチン
+   * makeIndexList を基に all.json を構築する
+   */
   protected function makeJsonObject() {
     $en = $this->makeIndexList($this->enDir);
     $ja = $this->makeIndexList($this->jaDir);
@@ -140,6 +168,10 @@ class Manip {
     return $jsonObject;
   }
 
+  /**
+   * index.md ファイルの上部の YAML 部分を取り出して
+   * YAML parse した結果を返す
+   */
   protected function getFrontMatter($filePath) {
     $buf = Util::file_get_contents($filePath);
     $lines = explode(PHP_EOL, $buf);
@@ -163,16 +195,21 @@ class Manip {
       $result = Yaml::parse($yaml);
     }
     catch (Exception $e) {
-      // Front-matter の parse に失敗した場合
       $result = ['title' => '(YAML parse error)'];
     }
     return $result;
   }
 
+  /**
+   * $filePath のファイルサイズを返す
+   */
   protected function getFileSize($filePath) {
     return filesize($filePath);
   }
 
+  /**
+   * $this->bcd を基に $query が存在するかどうかを判定する
+   */
   protected function validateBcdQuery($query) {
     $keys = explode('.', $query);
     $obj = $this->bcd;
@@ -183,6 +220,10 @@ class Manip {
     return true;
   }
 
+  /**
+   * Front-matter の browser-compat の値を validate した結果を返す
+   * browser-compat の値は文字列または配列である
+   */
   protected function parseMetaCompatBrowser($meta) {
     $ret = null;
     $queries = (array)($mata['browser-compat'] ?? []);
@@ -196,6 +237,10 @@ class Manip {
     return $ret;
   }
 
+  /**
+   * index.md 本文にある {{compat}} マクロで使われている
+   * $query の値を validate した結果を返す
+   */
   protected function parseCompatMacro($buf) {
     $ret = null;
     if (preg_match_all('/{{compat\("([^"]+)"/i', $buf, $m)) {
@@ -208,6 +253,10 @@ class Manip {
     return $ret;
   }
 
+  /**
+   * index.md の Front-matter または本文中の $query について
+   * invalid なものの具体値を配列にして返す
+   */
   protected function getBadBcdQueries($line, $meta) {
     $buf = Util::file_get_contents($line);
 
@@ -223,6 +272,9 @@ class Manip {
     return $ret;
   }
 
+  /**
+   * 英語記事の情報を連想配列にして返す
+   */
   protected function makeEnItem($line, &$en_nth, &$ja_nth) {
     $item = [];
     $meta = $this->getFrontMatter($line);
@@ -236,6 +288,9 @@ class Manip {
     return $item;
   }
 
+  /**
+   * 日本語記事の情報を連想配列にして返す
+   */
   protected function makeJaItem($line, &$ja_nth) {
     $item = [];
     $meta = $this->getFrontMatter($line);
