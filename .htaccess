@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteBase /
+RewriteRule ^date_of_all\.json$ date_of_all.json.php [L]

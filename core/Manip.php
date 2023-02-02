@@ -181,7 +181,7 @@ class Manip {
 
   protected function parseMetaCompatBrowser($meta) {
     $ret = null;
-    $queries = (array)($mata['browser-compat'] ?? null);
+    $queries = (array)($mata['browser-compat'] ?? []);
     if ($queries) {
       $ret = [];
       foreach ($queries as $query) {
@@ -225,7 +225,7 @@ class Manip {
 
     $item['en_nth'] = ++$en_nth;
     $item['en_title'] = $meta['title'] ?? '(untitled)';
-    $item['en_tags'] = $meta['tags'] ?? [];
+    $item['en_tags'] = (array)($meta['tags'] ?? []);
     $item['en_size'] = $this->getFileSize($line);
     $item['en_bad_bcd_queries'] = $this->getBadBcdQueries($line, $meta);
 
