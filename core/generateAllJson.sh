@@ -2,4 +2,4 @@
 
 cd $(dirname $0)
 
-/usr/bin/php ./generateAllJson.php
+/usr/bin/env php ./generateAllJson.php
