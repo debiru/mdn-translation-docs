@@ -17,7 +17,6 @@ function output($str) { echo esc_html($str); }
         <li>毎日更新しています。1日1回、リポジトリを最新の状態にしてファイルを全スキャンした結果を json に出力しています。
           <ul>
             <li>nth の値はスキャンごとに変動する可能性があります。nth は ID ではないのでご注意ください。</li>
-            <li>title はキャッシュしています。title が変更されても反映されません。古い title に気づいた方はご連絡ください。</li>
           </ul>
         </li>
         <li>フィルタリングは、ラジオボタンを変更するか、input 内で Enter を押すと実行されます。</li>
@@ -33,6 +32,8 @@ function output($str) { echo esc_html($str); }
             <li>（2022/8/8）ja-updated を追加しました。降順ソートすれば日本語版の更新（反映）状況を確認できます。</li>
             <li>（2022/8/22）(en/ja)-bad-bcd-queries を追加しました。null は query 記述なし、false は記述があるが valid、それ以外は bad な query です。</li>
             <li>（2023/2/2）既に全ファイルの index.md 化が完了しているので html か md かを表す ja-file 列を削除しました。</li>
+            <li>（2023/2/2）title を実際の URL アクセスの結果ではなく index.md から抽出するようにしました。</li>
+            <li>（2023/2/2）ソースコードを公開しました。<a href="https://github.com/debiru/mdn-translation-docs">https://github.com/debiru/mdn-translation-docs</a></li>
           </ul>
         </li>
         <li>一覧表の元となる<a href="all.json">JSONデータはこちら</a>です。</li>

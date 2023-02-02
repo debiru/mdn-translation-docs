@@ -1,5 +1,7 @@
 # mdn-translation-docs
 
+- https://mdn.lavoscore.org/
+
 ## Initialization
 
 ```
