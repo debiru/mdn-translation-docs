@@ -30,8 +30,8 @@ class Manip {
   protected function init() {
     // /public_html/core/Manip.php => /public_html
     $this->baseDir = dirname(__DIR__);
-    $this->contentRepoDir = Util::concatPath($this->baseDir, 'repo/content');
-    $this->translatedRepoDir = Util::concatPath($this->baseDir, 'repo/translated-content');
+    $this->contentRepoDir = Util::concatPath($this->baseDir, '.repo/content');
+    $this->translatedRepoDir = Util::concatPath($this->baseDir, '.repo/translated-content');
     $this->enDir = Util::concatPath($this->contentRepoDir, 'files/en-us');
     $this->jaDir = Util::concatPath($this->translatedRepoDir, 'files/ja');
     $this->jsonPath = Util::concatPath($this->baseDir, 'all.json');

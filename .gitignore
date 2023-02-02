@@ -1,8 +1,8 @@
-repo/*
-!repo/.gitkeep
+.repo/*
+!.repo/.gitkeep
 
 vendor/
 
-core/browser-compat-data/data.json
+.core/browser-compat-data/data.json
 
 all.json
