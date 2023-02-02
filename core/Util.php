@@ -2,6 +2,7 @@
 
 class Util {
   const SLASH = '/';
+  const TAB = "\t";
 
   public static function generateOptions($defaultOptions, $argOptions, $useUnknownOptions = false) {
     if ($argOptions === null) return $defaultOptions;
