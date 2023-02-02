@@ -18,3 +18,9 @@ $ ./composer.phar install
 
 $ cd ..
 ```
+
+## Generate all.json
+
+```
+$ core/generateAllJson.sh
+```

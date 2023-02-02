@@ -19,6 +19,11 @@ class Manip {
     self::init();
   }
 
+  public static function output($str, $newline = true) {
+    echo $str;
+    if ($newline) echo PHP_EOL;
+  }
+
   /**
    * リポジトリ等のファイル/ディレクトリパスをセットする
    */
@@ -40,8 +45,10 @@ class Manip {
   protected function setBCD() {
     if (!$this->debugSkip) {
       chdir(__DIR__);
+      self::output('[start] Download ./browser-compat-data/data.json');
       $cmd = Util::mycmd("./browser-compat-data/download.sh");
       Util::myexec($cmd);
+      self::output('[end] Download ./browser-compat-data/data.json');
     }
     $this->bcd = Util::getJson(__DIR__.'/browser-compat-data/data.json');
   }
@@ -51,12 +58,15 @@ class Manip {
    */
   public function generateAllJson() {
     if (!$this->debugSkip) {
+      self::output('[start] git pull');
       $this->gitPull($this->contentRepoDir);
       $this->gitPull($this->translatedRepoDir);
+      self::output('[end] git pull');
     }
 
     $jsonObject = $this->makeJsonObject();
     Util::setJson($this->jsonPath, $jsonObject);
+    self::output('*** Generated all.json ***');
   }
 
   /**
@@ -133,6 +143,8 @@ class Manip {
    * makeIndexList を基に all.json を構築する
    */
   protected function makeJsonObject() {
+    self::output('[start] makeJsonObject');
+
     $en = $this->makeIndexList($this->enDir);
     $ja = $this->makeIndexList($this->jaDir);
 
@@ -164,6 +176,8 @@ class Manip {
       'updated_at' => Util::strtodate(),
     ];
     $jsonObject['list'] = $list;
+
+    self::output('[end] makeJsonObject');
 
     return $jsonObject;
   }

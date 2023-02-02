@@ -1,3 +1,7 @@
 RewriteEngine On
 RewriteBase /
-RewriteRule ^date_of_all\.json$ date_of_all.json.php [L]
+
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+
+RewriteRule ^date_of_all\.json$ /date_of_all.json.php [L]
