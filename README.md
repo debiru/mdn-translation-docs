@@ -24,5 +24,5 @@ $ cd ..
 ## Generate all.json
 
 ```
-$ core/generateAllJson.sh
+$ ./core/generateAllJson.sh
 ```
