@@ -116,7 +116,7 @@ class Manip {
   }
 
   /**
-   * git log 情報を基にして $filePath に含まれる全ファイルの最終更新日を取得し
+   * git log 情報を基にして $this->jaDir に含まれる全ファイルの最終更新日を取得し
    * $filePath の最終更新日を返す
    */
   protected function getJaUpdated($filePath) {
