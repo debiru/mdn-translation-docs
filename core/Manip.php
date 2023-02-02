@@ -154,7 +154,7 @@ class Manip {
     $list = [];
     // 英語版が存在するページ
     foreach ($en as $dir => $line) {
-      $list[$dir] = $this->makeEnItem($line, $en_nth, $ja_nth);
+      $list[$dir] = $this->makeEnItem($line, $en_nth);
       // 更に日本語版も存在するページ
       if (isset($ja[$dir])) {
         $list[$dir] += $this->makeJaItem($ja[$dir], $ja_nth);
@@ -289,7 +289,7 @@ class Manip {
   /**
    * 英語記事の情報を連想配列にして返す
    */
-  protected function makeEnItem($line, &$en_nth, &$ja_nth) {
+  protected function makeEnItem($line, &$en_nth) {
     $item = [];
     $meta = $this->getFrontMatter($line);
 
