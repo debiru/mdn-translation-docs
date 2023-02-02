@@ -281,11 +281,11 @@
       this.en_nth = record.en_nth ?? '';
       this.en_size = record.en_size ?? '';
       this.en_tags = (record.en_tags ?? []).map(tag => `"${tag}"`).join(', ');
-      this.en_title = Util.rcdata2cdata(record.en_title ?? '');
+      this.en_title = record.en_title ?? '';
       this.en_url = Util.empty(this.en_nth) ? '' : Record.BASE_URL_EN + this.key;
 
       this.ja_nth = record.ja_nth ?? '';
-      this.ja_title = Util.rcdata2cdata(record.ja_title ?? '');
+      this.ja_title = record.ja_title ?? '';
       this.ja_url = Util.empty(this.ja_nth) ? '' : Record.BASE_URL_JA + this.key;
       this.ja_updated = record.ja_updated ?? '';
       this.ja_updated_url = Util.empty(this.ja_nth) ? '' : Record.BASE_GIT_JA + this.key + '/index.md';
