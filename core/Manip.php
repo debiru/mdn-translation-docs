@@ -1,6 +1,8 @@
 <?php
-require_once(__DIR__.'/lib/Spyc.php');
+require_once(__DIR__.'/vendor/autoload.php');
 require_once(__DIR__.'/Util.php');
+
+use \Symfony\Component\Yaml\Yaml as Yaml;
 
 class Manip {
   protected $baseDir;
@@ -156,13 +158,15 @@ class Manip {
     array_shift($lines);
 
     $yaml = implode(PHP_EOL, $lines);
+    $result = null;
     try {
-      return spyc_load($yaml);
+      $result = Yaml::parse($yaml);
     }
     catch (Exception $e) {
       // Front-matter の parse に失敗した場合
-      return ['title' => '(YAML parse error)'];
+      $result = ['title' => '(YAML parse error)'];
     }
+    return $result;
   }
 
   protected function getFileSize($filePath) {
