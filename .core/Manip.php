@@ -295,9 +295,13 @@ class Manip {
 
     $item['en_nth'] = ++$en_nth;
     $item['en_title'] = $meta['title'] ?? '(untitled)';
-    $item['en_tags'] = (array)($meta['tags'] ?? []);
     $item['en_size'] = $this->getFileSize($line);
     $item['en_bad_bcd_queries'] = $this->getBadBcdQueries($line, $meta);
+
+    unset($meta['title']);
+    unset($meta['slug']);
+    unset($meta['browser-compat']);
+    if (count($meta) > 0) $item['en_meta'] = $meta;
 
     return $item;
   }

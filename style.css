@@ -128,7 +128,10 @@ header ul.updates {
 #table .en-size {
   width: 120px;
 }
-#table .en-tags,
+#table td.en-meta {
+  white-space: pre-wrap;
+}
+#table .en-meta,
 #table .en-title,
 #table .en-url,
 #table .en-query,

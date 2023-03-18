@@ -6,6 +6,11 @@
 
     static clamp(value, min, max) { return Math.min(Math.max(min, value), max); }
 
+    static JSON = {
+      pretty(value) { return JSON.stringify(value, null, 2); },
+      prettyCompat(value) { return Util.JSON.pretty(value).replace(/^{\n|\n}$/g, '').replace(/^  /mg, ''); },
+    };
+
     static rcdata2cdata(str) {
       const m = {'&lt;': '<', '&gt;': '>', '&amp;': '&'};
       Object.keys(m).forEach(before => {
@@ -123,7 +128,7 @@
       this.radioSorts.en_size = new RadioSort('en-size', ['size ASC', 'size DESC']);
       this.radioSorts.ja_updated = new RadioSort('ja-updated', ['date ASC', 'date DESC']);
 
-      this.regexFilters.en_tags = new RegexFilter('en-tags', true);
+      this.regexFilters.en_meta = new RegexFilter('en-meta');
       this.regexFilters.en_title = new RegexFilter('en-title');
       this.regexFilters.en_url = new RegexFilter('en-url');
       this.regexFilters.en_query = new RegexFilter('en-query');
@@ -280,7 +285,7 @@
 
       this.en_nth = record.en_nth ?? '';
       this.en_size = record.en_size ?? '';
-      this.en_tags = (record.en_tags ?? []).map(tag => `"${tag}"`).join(', ');
+      this.en_meta = record.en_meta != null ? Util.JSON.prettyCompat(record.en_meta) : '';
       this.en_title = record.en_title ?? '';
       this.en_url = Util.empty(this.en_nth) ? '' : Record.BASE_URL_EN + this.key;
 
@@ -324,7 +329,7 @@
       tr.append(this.#recordCell(cls[0]));
       tr.append(this.#recordCell(cls[1], this.en_nth));
       tr.append(this.#recordCell(cls[2], this.en_size));
-      tr.append(this.#recordCell(cls[3], this.en_tags));
+      tr.append(this.#recordCell(cls[3], this.en_meta));
       tr.append(this.#recordCell(cls[4], this.en_title));
       tr.append(this.#recordCell(cls[5], this.#recordLink(this.en_url)));
       tr.append(this.#recordCell(cls[6], this.en_query));
@@ -449,14 +454,14 @@
         offset: Main.elems.offset.value,
         sort: Util.getCheckedRadioValue(Filter.radioSorts.radios),
         filter: Util.getCheckedRadioValue(Filter.radioFilters.ja_nth.radios),
-        regex_tags: Filter.regexFilters.en_tags.elems.regex.value,
+        regex_meta: Filter.regexFilters.en_meta.elems.regex.value,
         regex_a: Filter.regexFilters.en_title.elems.regex.value,
         regex_b: Filter.regexFilters.en_url.elems.regex.value,
         regex_bcd_en: Filter.regexFilters.en_query.elems.regex.value,
         regex_c: Filter.regexFilters.ja_title.elems.regex.value,
         regex_d: Filter.regexFilters.ja_url.elems.regex.value,
         regex_bcd_ja: Filter.regexFilters.ja_query.elems.regex.value,
-        not_regex_tags: Filter.regexFilters.en_tags.elems.not_regex.value,
+        not_regex_meta: Filter.regexFilters.en_meta.elems.not_regex.value,
         not_regex_a: Filter.regexFilters.en_title.elems.not_regex.value,
         not_regex_b: Filter.regexFilters.en_url.elems.not_regex.value,
         not_regex_bcd_en: Filter.regexFilters.en_query.elems.not_regex.value,
@@ -480,14 +485,14 @@
       Main.elems.offset.value = param.get('offset') ?? Main.elems.offset.getAttribute('value');
       Util.setCheckedRadioValue(Filter.radioSorts.en_size.radios, param.get('sort') ?? 'nth-asc');
       Util.setCheckedRadioValue(Filter.radioFilters.ja_nth.radios, param.get('filter') ?? 'all');
-      Filter.regexFilters.en_tags.elems.regex.value = param.get('regex_tags');
+      Filter.regexFilters.en_meta.elems.regex.value = param.get('regex_meta');
       Filter.regexFilters.en_title.elems.regex.value = param.get('regex_a');
       Filter.regexFilters.en_url.elems.regex.value = param.get('regex_b');
       Filter.regexFilters.en_query.elems.regex.value = param.get('regex_bcd_en');
       Filter.regexFilters.ja_title.elems.regex.value = param.get('regex_c');
       Filter.regexFilters.ja_url.elems.regex.value = param.get('regex_d');
       Filter.regexFilters.ja_query.elems.regex.value = param.get('regex_bcd_ja');
-      Filter.regexFilters.en_tags.elems.not_regex.value = param.get('not_regex_tags');
+      Filter.regexFilters.en_meta.elems.not_regex.value = param.get('not_regex_meta');
       Filter.regexFilters.en_title.elems.not_regex.value = param.get('not_regex_a');
       Filter.regexFilters.en_url.elems.not_regex.value = param.get('not_regex_b');
       Filter.regexFilters.en_query.elems.not_regex.value = param.get('not_regex_bcd_en');

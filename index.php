@@ -34,11 +34,12 @@ function output($str) { echo esc_html($str); }
             <li>（2023/2/2）既に全ファイルの index.md 化が完了しているので html か md かを表す ja-file 列を削除しました。</li>
             <li>（2023/2/2）title を実際の URL アクセスの結果ではなく index.md から抽出するようにしました。</li>
             <li>（2023/2/2）ソースコードを公開しました。<a href="https://github.com/debiru/mdn-translation-docs">https://github.com/debiru/mdn-translation-docs</a></li>
+            <li>（2023/3/18）<a href="https://github.com/mdn/mdn/issues/262">en-tags が削除された</a>ので代わりに en-meta を追加しました。title, slug, browser-compat 以外のキーを表示しています。</li>
           </ul>
         </li>
         <li>一覧表の元となる<a href="all.json">JSONデータはこちら</a>です。</li>
         <li>このスクリプトの著者へ連絡したい場合は <a href="https://mozillajp.slack.com">Japanese Mozilla community group の Slack</a> で @debiru_R にメンションするか Twitter の <a href="https://twitter.com/debiru_R">@debiru_R</a> までご連絡ください。</li>
-        <li>典型的なクエリ例：<a href="/">クエリリセット</a>、<a href="<?php output('?regex_tags=%28%3F%3D.*%22Beginner%22%29%28%3F%3D.*%22CSS%22%29'); ?>">タグのAND検索</a>、<a href="<?php output('?regex_b=glossary&sort=size-asc&filter=not-ja'); ?>">日本語版がないglossary一覧</a>、<a href="<?php output('?not_regex_bcd_ja=%5E%28null%7C%7Cfalse%29%24&regex_bcd_en=%5E%28null%7Cfalse%29%24'); ?>">日本語版が修正可能なBad-BCD-queries一覧</a></li>
+        <li>典型的なクエリ例：<a href="/">クエリリセット</a>、<a href="https://mdn2.lavoscore.org/?regex_meta=%22%28%3F%21page-type%29%28%3F%21spec-urls%29%5B%5E%22%5D*%22%3A">指定したキー以外をmetaに含むページ</a>、<a href="<?php output('?regex_b=glossary&sort=size-asc&filter=not-ja'); ?>">日本語版がないglossary一覧</a>、<a href="<?php output('?not_regex_bcd_ja=%5E%28null%7C%7Cfalse%29%24&regex_bcd_en=%5E%28null%7Cfalse%29%24'); ?>">日本語版が修正可能なBad-BCD-queries一覧</a></li>
       </ul>
     </header>
     <main id="tableWrapper"><table id="table">
@@ -47,7 +48,7 @@ function output($str) { echo esc_html($str); }
           <th class="count num">#</th>
           <th class="en-nth num">en-nth</th>
           <th class="en-size size">en-size</th>
-          <th class="en-tags tags">en-tags</th>
+          <th class="en-meta meta">en-meta</th>
           <th class="en-title title">en-title</th>
           <th class="en-url url">en-url</th>
           <th class="en-query query">en-bad-bcd-queries</th>
