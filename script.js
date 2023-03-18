@@ -170,7 +170,7 @@
   class RegexFilter {
     elems = {};
 
-    constructor(key, caseSensitive) {
+    constructor(key, caseSensitive = false) {
       this.key = key;
       this.caseSensitive = caseSensitive;
       this.#createElements();
