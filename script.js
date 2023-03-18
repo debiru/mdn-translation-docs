@@ -209,8 +209,8 @@
 
     filterRecords() {
       const flag = this.caseSensitive ? '' : 'i';
-      const regexp = new RegExp(this.elems.regex.value, flag);
-      const not_regexp = new RegExp(this.elems.not_regex.value, flag);
+      const regexp = new RegExp(this.elems.regex.value, 'sm' + flag);
+      const not_regexp = new RegExp(this.elems.not_regex.value, 'sm' + flag);
       Main.fullRecords.forEach(record => {
         const key = this.key.replaceAll('-', '_');
         const value = record[key];
