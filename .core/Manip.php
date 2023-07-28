@@ -77,6 +77,11 @@ class Manip {
       throw new Exception(sprintf('[gitPull] chdir failed. (%s)', $dir));
     }
 
+    $cmd = Util::mycmd("git fetch -p");
+    if (!Util::myexec($cmd)) {
+      throw new Exception(sprintf('[gitPull] git fetch -p failed. (%s)', $dir));
+    }
+
     $cmd = Util::mycmd("git pull");
     if (!Util::myexec($cmd)) {
       throw new Exception(sprintf('[gitPull] git pull failed. (%s)', $dir));
