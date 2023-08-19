@@ -34,7 +34,7 @@ class Manip {
     $this->translatedRepoDir = Util::concatPath($this->baseDir, '.repo/translated-content');
     $this->enDir = Util::concatPath($this->contentRepoDir, 'files/en-us');
     $this->jaDir = Util::concatPath($this->translatedRepoDir, 'files/ja');
-    $this->jsonPath = Util::concatPath($this->baseDir, 'all.json');
+    $this->allJsonPath = Util::concatPath($this->baseDir, 'all.json');
     $this->setBCD();
   }
 
@@ -65,7 +65,7 @@ class Manip {
     }
 
     $jsonObject = $this->makeJsonObject();
-    Util::setJson($this->jsonPath, $jsonObject);
+    Util::setJson($this->allJsonPath, $jsonObject);
     self::output('*** Generated all.json ***');
   }
 
