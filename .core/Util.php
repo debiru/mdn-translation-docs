@@ -14,6 +14,17 @@ class Util {
     return $options;
   }
 
+  public static function get($obj, $keys, $default = null) {
+    $retval = $obj;
+    $keys = (array)$keys;
+    foreach ($keys as $key) {
+      $array = (array)$retval;
+      if (!isset($array[$key])) return $default;
+      $retval = $array[$key];
+    }
+    return $retval;
+  }
+
   public static function mycmd(...$args) {
     $format = array_shift($args);
     foreach ($args as &$arg) {

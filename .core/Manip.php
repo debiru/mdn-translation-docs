@@ -82,9 +82,9 @@ class Manip {
       throw new Exception(sprintf('[gitPull] git fetch -p failed. (%s)', $dir));
     }
 
-    $cmd = Util::mycmd("git pull");
+    $cmd = Util::mycmd("git merge origin/main");
     if (!Util::myexec($cmd)) {
-      throw new Exception(sprintf('[gitPull] git pull failed. (%s)', $dir));
+      throw new Exception(sprintf('[gitPull] git merge failed. (%s)', $dir));
     }
 
     // 元の場所に戻っておく
