@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__.'/vendor/autoload.php');
 require_once(__DIR__.'/Util.php');
+require_once(__DIR__.'/BCD.php');
 
 use \Symfony\Component\Yaml\Yaml as Yaml;
 
@@ -11,6 +12,7 @@ class Manip {
   protected $enDir;
   protected $jaDir;
   protected $allJsonPath;
+  protected $bcdJsonPath;
   protected $bcd;
 
   protected $debugSkip = false;
@@ -35,6 +37,7 @@ class Manip {
     $this->enDir = Util::concatPath($this->contentRepoDir, 'files/en-us');
     $this->jaDir = Util::concatPath($this->translatedRepoDir, 'files/ja');
     $this->allJsonPath = Util::concatPath($this->baseDir, 'all.json');
+    $this->bcdJsonPath = Util::concatPath($this->baseDir, 'bcd/bcd.json');
     $this->setBCD();
   }
 
@@ -67,6 +70,10 @@ class Manip {
     $jsonObject = $this->makeJsonObject();
     Util::setJson($this->allJsonPath, $jsonObject);
     self::output('*** Generated all.json ***');
+
+    $bcdResult = BCD::getResult($this->bcd);
+    Util::setJson($this->bcdJsonPath, $bcdResult);
+    self::output('*** Generated bcd.json ***');
   }
 
   /**

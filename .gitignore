@@ -6,3 +6,4 @@ vendor/
 .core/browser-compat-data/data.json
 
 all.json
+bcd.json
