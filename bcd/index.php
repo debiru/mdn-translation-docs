@@ -2,13 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>BCD一覧表</title>
+    <title>MDN - BCD一覧表</title>
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
   <body>
     <header>
-      <h1><a href="/">BCD一覧表</a></h1>
+      <h1><a href="/">MDN - BCD一覧表</a></h1>
       <ul>
         <li><a href="https://mdn.lavoscore.org/">MDN翻訳ステータス一覧表</a>の関連ツールです。</li>
       </ul>

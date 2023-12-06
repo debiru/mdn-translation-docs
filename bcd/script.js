@@ -453,6 +453,7 @@
           if (Util.empty(val)) unset = true;
           else if (key === 'limit' && val === NS.pager.limit.getAttribute('value')) unset = true;
           else if (key === 'offset' && val === NS.pager.offset.getAttribute('value')) unset = true;
+          else if (key === 'sort' && val === 'bcdQuery.asc') unset = true;
           else if (val === 'Both') unset = true;
           unset ? params.delete(key) : params.set(key, val);
         }
