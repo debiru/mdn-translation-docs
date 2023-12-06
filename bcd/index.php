@@ -9,6 +9,9 @@
   <body>
     <header>
       <h1><a href="/">BCD一覧表</a></h1>
+      <ul>
+        <li><a href="https://mdn.lavoscore.org/">MDN翻訳ステータス一覧表</a>の関連ツールです。</li>
+      </ul>
     </header>
     <main id="tableWrapper"><table id="table">
       <thead>

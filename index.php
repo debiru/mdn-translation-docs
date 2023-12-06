@@ -14,6 +14,7 @@ function output($str) { echo esc_html($str); }
     <header>
       <h1><a href="/">MDN翻訳ステータス一覧表</a></h1>
       <ul>
+        <li><a href="https://mdn-bcd.lavoscore.org/">BCD一覧表</a>も公開しています。</li>
         <li>毎日更新しています。1日1回、リポジトリを最新の状態にしてファイルを全スキャンした結果を json に出力しています。
           <ul>
             <li>nth の値はスキャンごとに変動する可能性があります。nth は ID ではないのでご注意ください。</li>

@@ -96,6 +96,8 @@
       }
       NS.thead.prepend(tr);
       Sub.FilterItem.createFilterElements();
+
+      NS.filters.url.append(NS.pager.block);
     },
     main() {
       Sub.FetchManip.fetch(data => {
@@ -277,6 +279,7 @@
       },
       filter(preventResetOffset) {
         Sub.FilterItem.execRegexFilters();
+        Sub.FilterItem.execRadioFilters();
 
         NS.filteredRecords = [];
         for (const record of NS.fullRecords) {
@@ -330,12 +333,20 @@
         Sub.RadioSet.create('bcdQuery', labels, true);
         for (const browser of NS.browsers) {
           Sub.RadioSet.create(browser, labels, true);
+          Sub.RadioSet.create(browser, ['Both', 'Null', 'Not Null']);
         }
         Sub.RegexFilter.create('bcdQuery');
       },
       execRegexFilters() {
-        for(const key of Object.keys(NS.regexFilters)) {
+        for (const key of Object.keys(NS.regexFilters)) {
           Sub.RegexFilter.filterRecords(key);
+        }
+      },
+      execRadioFilters() {
+        for (const browser of NS.browsers) {
+          const key = Util.sprintf('radio-%s', browser);
+          const radios = NS.radios[key];
+          Sub.RadioSet.filterRecords(radios);
         }
       },
     },
@@ -395,7 +406,7 @@
         const th = NS.filters[key];
         const div = document.createElement('div');
         div.className = 'group';
-        if (isSort) div.innerHTML = '<span class="sortLabel">Sort: </span>';
+        div.innerHTML = Util.sprintf('<span class="groupLabel">%s: </span>', isSort ? 'Sort' : 'Filter');
         for (const labelStr of labels) {
           const label = document.createElement('label');
           const textNode = document.createTextNode(labelStr);
@@ -414,6 +425,15 @@
         }
         NS.radios[name][0].setAttribute('checked', 'checked');
         th.append(div);
+      },
+      filterRecords(radios) {
+        const radioValue = Sub.Util.getCheckedRadioValue(radios);
+        const [browser, value] = radioValue.split(/\./);
+        for (const record of NS.fullRecords) {
+          const recordValue = record.support[browser].numValue;
+          if (value === 'Null') record.updateMatch(recordValue == null);
+          if (value === 'Not Null') record.updateMatch(recordValue != null);
+        }
       },
     },
     Main: {
