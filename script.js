@@ -4,7 +4,7 @@
   class Util {
     static empty(arg) { return arg == null || arg === ''; }
 
-    static clamp(value, min, max) { return Math.min(Math.max(min, value), max); }
+    static clamp(min, value, max) { return Math.min(Math.max(min, value), max); }
 
     static JSON = {
       pretty(value) { return JSON.stringify(value, null, 2); },
@@ -312,7 +312,7 @@
       if (label == null) label = url;
       const anchor = document.createElement('a');
       anchor.setAttribute('href', url);
-      anchor.append(label);
+      anchor.textContent = label;
       return anchor;
     }
 

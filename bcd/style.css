@@ -1,0 +1,132 @@
+html, body, ul {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: sans-serif;
+}
+button, label, input[type="checkbox"], input[type="radio"] {
+  cursor: pointer;
+}
+header h1 {
+  margin: 20px 20px 10px;
+}
+header h1 a {
+  color: #09f;
+  text-decoration: none;
+}
+header h1 a:hover {
+  text-decoration: underline;
+}
+header ul {
+  margin: 10px 0 20px 40px;
+}
+header ul ul {
+  margin: 0 0 0 40px;
+}
+header ul.updates {
+  font-size: 14px;
+}
+#tableWrapper {
+  padding: 0 20px 20px;
+  vertical-align: top;
+}
+.controlWrapper {
+  margin-bottom: 10px;
+}
+.controlWrapper .pagerBlock input[type="text"] {
+  width: 4em;
+}
+#table {
+  border-spacing: 0;
+  border-collapse: separate;
+  border-width: 1px 0 0 1px;
+  border-style: solid;
+  border-color: #333;
+  background: #fff;
+  font-size: 14px;
+  word-break: break-all;
+}
+#table th, #table td {
+  box-sizing: border-box;
+  padding: 2px 4px;
+  border-width: 0 1px 1px 0;
+  border-style: solid;
+  border-color: #333;
+}
+#table thead {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  text-align: center;
+}
+#table input[type="text"] {
+  width: 16em;
+}
+#table input[type="checkbox"],
+#table input[type="radio"] {
+  margin: 0 0 0 4px;
+  padding: 0;
+}
+#filters .block {
+  display: inline-block;
+  margin: 8px 0;
+  text-align: right;
+}
+#filters .block label {
+  display: block;
+}
+#filters .group {
+  display: inline-block;
+  text-align: right;
+}
+#filters .group label {
+  display: block;
+  margin: 0 4px;
+}
+#filters label input[type="text"] {
+  margin-left: 8px;
+}
+#labels {
+  background: #ccf;
+  white-space: nowrap;
+}
+#table {
+  counter-reset: count;
+  width: 100%;
+}
+#table p {
+  margin: 4px;
+}
+#table tbody tr {
+  counter-increment: count;
+}
+#table tbody .count, #table thead #filters .count {
+  background: #fffff0;
+}
+#table tbody .count::before {
+  content: counter(count);
+}
+#table .num {
+  width: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+#table .url {
+  width: 0;
+  white-space: nowrap;
+}
+#table .browser {
+  width: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+#table .browser[data-value] {
+  background: #cfc;
+}
+#table .browser[data-value=""] {
+  background: #fcc;
+}
+#table .browser[data-partial-implementation="true"] {
+  background: #ff0;
+}

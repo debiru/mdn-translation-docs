@@ -76,6 +76,10 @@ class Util {
     return $retval;
   }
 
+  public static function array_filter_keys($assoc, $filterKeys) {
+    return array_intersect_key($assoc, array_flip($filterKeys));
+  }
+
   public static function json_encode($object, $pretty = true) {
     if (is_string($object)) $object = self::json_decode($object);
     $options = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;

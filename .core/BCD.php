@@ -11,10 +11,12 @@ class BCD {
       $compat = $assoc['__compat'];
       if (empty($parentUrl)) $parentUrl = str_replace('https://developer.mozilla.org/docs/', '/', $compat['mdn_url'] ?? '');
 
-      $support = $compat['support'];
+      $browsers = ['chrome', 'edge', 'firefox', 'opera', 'safari', 'safari_ios'];
+      $support = Util::array_filter_keys($compat['support'], $browsers);
       foreach ($support as $key => $value) {
         if (!array_key_exists('version_added', $value)) $value = $value[0];
-        $support[$key] = sprintf('%s%s', isset($value['partial_implementation']) ? '!' : '', $value['version_added']);
+        $versionAdded = str_replace('≤', '<=', $value['version_added']);
+        $support[$key] = sprintf('%s%s', isset($value['partial_implementation']) ? '!' : '', $versionAdded);
       }
 
       self::$result[$bcdKey] = ['url' => $parentUrl, 'support' => $support];
