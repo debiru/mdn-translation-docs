@@ -68,9 +68,14 @@ header ul.updates {
   margin: 0 0 0 4px;
   padding: 0;
 }
+#filters th {
+  padding: 8px;
+}
+#filters th > *:not(:first-child) {
+  margin-top: 4px;
+}
 #filters .block {
   display: inline-block;
-  margin: 8px 0;
   text-align: right;
 }
 #filters .block label {
@@ -80,9 +85,20 @@ header ul.updates {
   display: inline-block;
   text-align: right;
 }
+#filters .bcdQuery .group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+#filters .group .sortLabel {
+  display: block;
+  text-align: center;
+}
 #filters .group label {
   display: block;
   margin: 0 4px;
+  line-height: 1.3;
 }
 #filters label input[type="text"] {
   margin-left: 8px;
@@ -112,12 +128,16 @@ header ul.updates {
   text-align: center;
   white-space: nowrap;
 }
+#table .count {
+  width: 5em;
+}
 #table .url {
-  width: 0;
-  white-space: nowrap;
+  width: 400px;
+  overflow-wrap: break-word;
+  font-size: 12px;
 }
 #table .browser {
-  width: 0;
+  width: 6em;
   text-align: center;
   white-space: nowrap;
 }

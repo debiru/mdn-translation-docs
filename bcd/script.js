@@ -4,6 +4,8 @@
   const NS = {
     BASE_URL_EN: 'https://developer.mozilla.org/en-US/docs',
     browsers: ['chrome', 'edge', 'firefox', 'opera', 'safari', 'safari_ios'],
+    regexFilters: {},
+    radios: {},
   };
   window.NS = NS;
 
@@ -11,6 +13,7 @@
     setNS() {
       NS.tableWrapper = document.getElementById('tableWrapper');
       NS.table = document.getElementById('table');
+      NS.thead = NS.table.querySelector('thead');
       NS.tbody = document.createElement('tbody');
       NS.table.append(NS.tbody);
     },
@@ -77,6 +80,23 @@
         doAction();
       });
     },
+    filtersRow() {
+      const clsList = Sub.TableManip.getColumnClassNames();
+      const tr = document.createElement('tr');
+      tr.id = 'filters';
+
+      NS.filters = {};
+      for (const cls of clsList) {
+        const th = document.createElement('th');
+        th.className = cls;
+        tr.append(th);
+
+        const key = cls.split(/\s+/)[0];
+        NS.filters[key] = th;
+      }
+      NS.thead.prepend(tr);
+      Sub.FilterItem.createFilterElements();
+    },
     main() {
       Sub.FetchManip.fetch(data => {
         NS.fullRecords = [];
@@ -89,6 +109,14 @@
   };
 
   const Sub = {
+    Util: {
+      getCheckedRadioValue(radios) {
+        for (const radio of radios) {
+          if (radio.checked) return radio.value;
+        }
+        return null;
+      },
+    },
     FetchManip: {
       async fetch(callback) {
         const date_of = await fetch('date_of_bcd.json').then(res => res.json());
@@ -183,6 +211,7 @@
         }
 
         self.tr = Sub.Record.createRow(self);
+        self.updateMatch = cond => self.match &&= cond;
         return self;
       },
       createRow(self) {
@@ -244,15 +273,45 @@
         }
       },
       postFilter() {
+        NS.filters.count.textContent = NS.filteredRecords.length;
       },
       filter(preventResetOffset) {
+        Sub.FilterItem.execRegexFilters();
+
         NS.filteredRecords = [];
         for (const record of NS.fullRecords) {
           if (record.match) NS.filteredRecords.push(record);
         }
         if (!preventResetOffset) NS.pager.offset.value = 0;
-        // Sub.Filter.sort();
+        Sub.Filter.sort();
         Sub.Filter.showPage();
+      },
+      sort() {
+        function baseCompare(a, b, sign) {
+          if (a.key < b.key) return sign;
+          if (a.key > b.key) return -sign;
+          return 0;
+        }
+
+        function supportCompare(a, b, key, sign) {
+          const aVal = a.support[key].numValue;
+          const bVal = b.support[key].numValue;
+          if (aVal != null || bVal != null) {
+            if (aVal == null) return sign;
+            if (bVal == null) return -sign;
+            if (aVal < bVal) return sign;
+            if (aVal > bVal) return -sign;
+          }
+          return baseCompare(a, b, -1);
+        }
+
+        const value = Sub.Util.getCheckedRadioValue(NS.radios['radio-sort']);
+        const orderMap = {asc: -1, desc: 1};
+        const [key, order] = value.split(/\./);
+        if (key === 'bcdQuery') NS.filteredRecords.sort((a, b) => baseCompare(a, b, orderMap[order]));
+        if (NS.browsers.includes(key)) {
+          NS.filteredRecords.sort((a, b) => supportCompare(a, b, key, orderMap[order]));
+        }
       },
       showPage() {
         const limit = Sub.Main.getLimit();
@@ -263,6 +322,98 @@
         const cssValue = `count ${offset}`;
         NS.tbody.style.counterSet = cssValue;
         NS.tbody.style.counterReset = cssValue; // for Safari
+      },
+    },
+    FilterItem: {
+      createFilterElements() {
+        const labels = ['asc', 'desc'];
+        Sub.RadioSet.create('bcdQuery', labels, true);
+        for (const browser of NS.browsers) {
+          Sub.RadioSet.create(browser, labels, true);
+        }
+        Sub.RegexFilter.create('bcdQuery');
+      },
+      execRegexFilters() {
+        for(const key of Object.keys(NS.regexFilters)) {
+          Sub.RegexFilter.filterRecords(key);
+        }
+      },
+    },
+    RegexFilter: {
+      create(key) {
+        Sub.RegexFilter.createElements(key);
+        Sub.RegexFilter.bindElements(key)
+      },
+      createElements(key) {
+        const th = NS.filters[key];
+        th._elems = {};
+        const html = `
+          <div class="block">
+            <label>正規表現フィルタ<input type="text" data-type="regex"></label>
+            <label>AND not<input type="text" data-type="not-regex"></label>
+          </div>
+        `;
+        th.insertAdjacentHTML('beforeend', html);
+        th._elems.regex = th.querySelector('input[data-type="regex"]');
+        th._elems.not_regex = th.querySelector('input[data-type="not-regex"]');
+        NS.regexFilters[key] = th._elems;
+      },
+      bindElements(key) {
+        const th = NS.filters[key];
+        const doAction = () => Sub.Filter.execFilter();
+        const textInputs = th.querySelectorAll('input[type="text"]');
+        for (const input of textInputs) {
+          Util.addEvent(input, 'keyup', evt => {
+            if (evt.key === 'Enter') doAction();
+          });
+
+          Util.addEvent(input, 'focusout', () => {
+            doAction();
+          });
+        }
+      },
+      filterRecords(key) {
+        const th = NS.filters[key];
+        const regexp = new RegExp(th._elems.regex.value, 'smi');
+        const not_regexp = new RegExp(th._elems.not_regex.value, 'smi');
+        const recordKeyMap = {bcdQuery: 'key', url: 'url'};
+        NS.fullRecords.forEach(record => {
+          const value = record[recordKeyMap[key]];
+          const match = Util.empty(th._elems.regex.value) ? true : regexp.test(value);
+          const not_match = Util.empty(th._elems.not_regex.value) ? false : not_regexp.test(value);
+          record.updateMatch(match && !not_match);
+        });
+      },
+    },
+    RadioSet: {
+      create(key, labels, isSort) {
+        Sub.RadioSet.createElements(key, labels, isSort);
+      },
+      createElements(key, labels, isSort) {
+        const name = isSort ? 'radio-sort' : Util.sprintf('radio-%s', key);
+        NS.radios[name] ??= [];
+        const th = NS.filters[key];
+        const div = document.createElement('div');
+        div.className = 'group';
+        if (isSort) div.innerHTML = '<span class="sortLabel">Sort: </span>';
+        for (const labelStr of labels) {
+          const label = document.createElement('label');
+          const textNode = document.createTextNode(labelStr);
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = name;
+          input.value = Util.sprintf('%s.%s', key, labelStr);
+
+          Util.addEvent(input, 'change', () => {
+            Sub.Filter.execFilter();
+          });
+
+          NS.radios[name].push(input);
+          label.append(textNode, input);
+          div.append(label);
+        }
+        NS.radios[name][0].setAttribute('checked', 'checked');
+        th.append(div);
       },
     },
     Main: {

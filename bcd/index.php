@@ -21,7 +21,7 @@
           <th class="firefox browser">Firefox</th>
           <th class="opera browser">Opera</th>
           <th class="safari browser">Safari</th>
-          <th class="ios-safari browser">iOS Safari</th>
+          <th class="safari_ios browser">iOS Safari</th>
         </tr>
       </thead>
     </table></main>
