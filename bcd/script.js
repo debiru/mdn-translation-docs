@@ -105,7 +105,8 @@
         for (const key of Object.keys(data)) {
           NS.fullRecords.push(Sub.Record.create(key, data[key]));
         }
-        Sub.Filter.execFilter();
+        Sub.URLManip.loadQuery();
+        Sub.Filter.execFilter(true);
       });
     },
   };
@@ -117,6 +118,11 @@
           if (radio.checked) return radio.value;
         }
         return null;
+      },
+      setRadioValue(radios, value) {
+        for (const radio of radios) {
+          if (radio.value === value) radio.checked = true;
+        }
       },
     },
     FetchManip: {
@@ -325,6 +331,7 @@
         const cssValue = `count ${offset}`;
         NS.tbody.style.counterSet = cssValue;
         NS.tbody.style.counterReset = cssValue; // for Safari
+        Sub.URLManip.saveQuery();
       },
     },
     FilterItem: {
@@ -413,7 +420,7 @@
           const input = document.createElement('input');
           input.type = 'radio';
           input.name = name;
-          input.value = Util.sprintf('%s.%s', key, labelStr);
+          input.value = Util.sprintf('%s.%s', key, labelStr.replaceAll(/\s+/g, ''));
 
           Util.addEvent(input, 'change', () => {
             Sub.Filter.execFilter();
@@ -432,7 +439,55 @@
         for (const record of NS.fullRecords) {
           const recordValue = record.support[browser].numValue;
           if (value === 'Null') record.updateMatch(recordValue == null);
-          if (value === 'Not Null') record.updateMatch(recordValue != null);
+          if (value === 'NotNull') record.updateMatch(recordValue != null);
+        }
+      },
+    },
+    URLManip: {
+      assocToURL(assoc) {
+        const url = new URL(location.href);
+        const params = url.searchParams;
+        for (const key of Object.keys(assoc)) {
+          const val = assoc[key];
+          let unset = false;
+          if (Util.empty(val)) unset = true;
+          else if (key === 'limit' && val === NS.pager.limit.getAttribute('value')) unset = true;
+          else if (key === 'offset' && val === NS.pager.offset.getAttribute('value')) unset = true;
+          else if (val === 'Both') unset = true;
+          unset ? params.delete(key) : params.set(key, val);
+        }
+        return url;
+      },
+      exportQuery() {
+        const assoc = {
+          limit: NS.pager.limit.value,
+          offset: NS.pager.offset.value,
+          sort: Sub.Util.getCheckedRadioValue(NS.radios['radio-sort']),
+          regex: NS.regexFilters.bcdQuery.regex.value,
+          not_regex: NS.regexFilters.bcdQuery.not_regex.value,
+        };
+        for (const browser of NS.browsers) {
+          const [key, value] = Sub.Util.getCheckedRadioValue(NS.radios[Util.sprintf('radio-%s', browser)]).split(/\./);
+          assoc[browser] = value;
+        }
+        return Sub.URLManip.assocToURL(assoc);
+      },
+      saveQuery() {
+        const url = Sub.URLManip.exportQuery();
+        window.history.replaceState({}, '', url.href.replace(/%2F/g, '/'));
+      },
+      loadQuery() {
+        const url = new URL(location.href);
+        const param = url.searchParams;
+
+        NS.pager.limit.value = param.get('limit') ?? NS.pager.limit.getAttribute('value');
+        NS.pager.offset.value = param.get('offset') ?? NS.pager.offset.getAttribute('value');
+        Sub.Util.setRadioValue(NS.radios['radio-sort'], param.get('sort') ?? 'bcdQuery.asc');
+        NS.regexFilters.bcdQuery.regex.value = param.get('regex');
+        NS.regexFilters.bcdQuery.not_regex.value = param.get('not_regex');
+        for (const browser of NS.browsers) {
+          const value = param.get(browser) ?? 'Both';
+          Sub.Util.setRadioValue(NS.radios[Util.sprintf('radio-%s', browser)], Util.sprintf('%s.%s', browser, value));
         }
       },
     },
