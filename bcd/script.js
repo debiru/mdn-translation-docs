@@ -6,6 +6,7 @@
     browsers: ['chrome', 'edge', 'firefox', 'opera', 'safari', 'safari_ios'],
     regexFilters: {},
     radios: {},
+    valueFilters: {},
   };
   window.NS = NS;
 
@@ -286,6 +287,7 @@
       filter(preventResetOffset) {
         Sub.FilterItem.execRegexFilters();
         Sub.FilterItem.execRadioFilters();
+        Sub.FilterItem.execValueFilters();
 
         NS.filteredRecords = [];
         for (const record of NS.fullRecords) {
@@ -341,6 +343,7 @@
         for (const browser of NS.browsers) {
           Sub.RadioSet.create(browser, labels, true);
           Sub.RadioSet.create(browser, ['Both', 'Null', 'Not Null']);
+          Sub.ValueFilter.create(browser);
         }
         Sub.RegexFilter.create('bcdQuery');
       },
@@ -356,6 +359,11 @@
           Sub.RadioSet.filterRecords(radios);
         }
       },
+      execValueFilters() {
+        for (const key of Object.keys(NS.valueFilters)) {
+          Sub.ValueFilter.filterRecords(key);
+        }
+      },
     },
     RegexFilter: {
       create(key) {
@@ -364,7 +372,6 @@
       },
       createElements(key) {
         const th = NS.filters[key];
-        th._elems = {};
         const html = `
           <div class="block">
             <label>正規表現フィルタ<input type="text" data-type="regex"></label>
@@ -372,14 +379,14 @@
           </div>
         `;
         th.insertAdjacentHTML('beforeend', html);
-        th._elems.regex = th.querySelector('input[data-type="regex"]');
-        th._elems.not_regex = th.querySelector('input[data-type="not-regex"]');
-        NS.regexFilters[key] = th._elems;
+        const regex = th.querySelector('input[data-type="regex"]');
+        const not_regex = th.querySelector('input[data-type="not-regex"]');
+        NS.regexFilters[key] = {regex, not_regex};
       },
       bindElements(key) {
         const th = NS.filters[key];
         const doAction = () => Sub.Filter.execFilter();
-        const textInputs = th.querySelectorAll('input[type="text"]');
+        const textInputs = th.querySelectorAll('input[data-type="regex"], input[data-type="not-regex"]');
         for (const input of textInputs) {
           Util.addEvent(input, 'keyup', evt => {
             if (evt.key === 'Enter') doAction();
@@ -391,14 +398,14 @@
         }
       },
       filterRecords(key) {
-        const th = NS.filters[key];
-        const regexp = new RegExp(th._elems.regex.value, 'smi');
-        const not_regexp = new RegExp(th._elems.not_regex.value, 'smi');
+        const elems = NS.regexFilters[key];
+        const regexp = new RegExp(elems.regex.value, 'smi');
+        const not_regexp = new RegExp(elems.not_regex.value, 'smi');
         const recordKeyMap = {bcdQuery: 'key', url: 'url'};
         NS.fullRecords.forEach(record => {
           const value = record[recordKeyMap[key]];
-          const match = Util.empty(th._elems.regex.value) ? true : regexp.test(value);
-          const not_match = Util.empty(th._elems.not_regex.value) ? false : not_regexp.test(value);
+          const match = Util.empty(elems.regex.value) ? true : regexp.test(value);
+          const not_match = Util.empty(elems.not_regex.value) ? false : not_regexp.test(value);
           record.updateMatch(match && !not_match);
         });
       },
@@ -443,6 +450,45 @@
         }
       },
     },
+    ValueFilter: {
+      create(key) {
+        Sub.ValueFilter.createElements(key);
+        Sub.ValueFilter.bindElements(key);
+      },
+      createElements(key) {
+        const th = NS.filters[key];
+        const html = `
+          <div class="block">
+            <label>値<input type="text" data-type="value"></label>
+          </div>
+        `;
+        th.insertAdjacentHTML('beforeend', html);
+        const valueInput = th.querySelector('input[data-type="value"]');
+        NS.valueFilters[key] = valueInput;
+      },
+      bindElements(key) {
+        const th = NS.filters[key];
+        const doAction = () => Sub.Filter.execFilter();
+        const textInputs = th.querySelectorAll('input[data-type="value"]');
+        for (const input of textInputs) {
+          Util.addEvent(input, 'keyup', evt => {
+            if (evt.key === 'Enter') doAction();
+          });
+
+          Util.addEvent(input, 'focusout', () => {
+            doAction();
+          });
+        }
+      },
+      filterRecords(key) {
+        const valueInput = NS.valueFilters[key];
+        NS.fullRecords.forEach(record => {
+          const value = String(record.support[key].numValue).replace(/9999/, 'preview');
+          const match = Util.empty(valueInput.value) ? true : valueInput.value === value;
+          record.updateMatch(match);
+        });
+      },
+    },
     URLManip: {
       assocToURL(assoc) {
         const url = new URL(location.href);
@@ -468,8 +514,10 @@
           not_regex: NS.regexFilters.bcdQuery.not_regex.value,
         };
         for (const browser of NS.browsers) {
-          const [key, value] = Sub.Util.getCheckedRadioValue(NS.radios[Util.sprintf('radio-%s', browser)]).split(/\./);
-          assoc[browser] = value;
+          const [key, radioValue] = Sub.Util.getCheckedRadioValue(NS.radios[Util.sprintf('radio-%s', browser)]).split(/\./);
+          assoc[browser] = radioValue;
+
+          assoc[Util.sprintf('%s_value', browser)] = NS.valueFilters[key].value;
         }
         return Sub.URLManip.assocToURL(assoc);
       },
@@ -487,8 +535,10 @@
         NS.regexFilters.bcdQuery.regex.value = param.get('regex');
         NS.regexFilters.bcdQuery.not_regex.value = param.get('not_regex');
         for (const browser of NS.browsers) {
-          const value = param.get(browser) ?? 'Both';
-          Sub.Util.setRadioValue(NS.radios[Util.sprintf('radio-%s', browser)], Util.sprintf('%s.%s', browser, value));
+          const radioValue = param.get(browser) ?? 'Both';
+          Sub.Util.setRadioValue(NS.radios[Util.sprintf('radio-%s', browser)], Util.sprintf('%s.%s', browser, radioValue));
+
+          NS.valueFilters[browser].value = param.get(Util.sprintf('%s_value', browser));
         }
       },
     },

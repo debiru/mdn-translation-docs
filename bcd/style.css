@@ -93,6 +93,9 @@ header ul.updates {
   display: block;
   background: #ccc;
 }
+#filters .browser .block input[type="text"] {
+  width: 3em;
+}
 #filters .group label {
   display: block;
 }
