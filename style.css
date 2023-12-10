@@ -95,7 +95,7 @@ header ul.updates {
 #table {
   counter-reset: count;
   table-layout: fixed;
-  width: 3830px;
+  width: 4230px;
 }
 #table p {
   margin: 4px;
@@ -135,6 +135,7 @@ header ul.updates {
 #table .en-title,
 #table .en-url,
 #table .en-query,
+#table .en-examples,
 #table .ja-title,
 #table .ja-url,
 #table .ja-query,

@@ -363,6 +363,7 @@ class Manip {
     $item['en_title'] = $meta['title'] ?? '(untitled)';
     $item['en_size'] = $this->getFileSize($line);
     $item['en_bad_bcd_queries'] = $this->getBadBcdQueries($line, $meta);
+    $item['en_bad_interactive_examples'] = $this->getBadInteractiveExamples($line);
 
     unset($meta['title']);
     unset($meta['slug']);

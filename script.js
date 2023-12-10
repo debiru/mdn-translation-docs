@@ -132,6 +132,7 @@
       this.regexFilters.en_title = new RegexFilter('en-title');
       this.regexFilters.en_url = new RegexFilter('en-url');
       this.regexFilters.en_query = new RegexFilter('en-query');
+      this.regexFilters.en_examples = new RegexFilter('en-examples');
       this.regexFilters.ja_title = new RegexFilter('ja-title');
       this.regexFilters.ja_url = new RegexFilter('ja-url');
       this.regexFilters.ja_query = new RegexFilter('ja-query');
@@ -305,6 +306,7 @@
       this.en_query = scanQuery(record.en_bad_bcd_queries);
       this.ja_query = scanQuery(record.ja_bad_bcd_queries);
 
+      this.en_examples = scanQuery(record.en_bad_interactive_examples);
       this.ja_examples = scanQuery(record.ja_bad_interactive_examples);
 
       this.tr = this.#recordRow();
@@ -336,12 +338,13 @@
       tr.append(this.#recordCell(cls[4], this.en_title));
       tr.append(this.#recordCell(cls[5], this.#recordLink(this.en_url)));
       tr.append(this.#recordCell(cls[6], this.en_query));
-      tr.append(this.#recordCell(cls[7], this.ja_nth));
-      tr.append(this.#recordCell(cls[8], this.ja_title));
-      tr.append(this.#recordCell(cls[9], this.#recordLink(this.ja_url)));
-      tr.append(this.#recordCell(cls[10], this.ja_query));
-      tr.append(this.#recordCell(cls[11], this.ja_examples));
-      tr.append(this.#recordCell(cls[12], this.#recordLink(this.ja_updated_url, this.ja_updated)));
+      tr.append(this.#recordCell(cls[7], this.en_examples));
+      tr.append(this.#recordCell(cls[8], this.ja_nth));
+      tr.append(this.#recordCell(cls[9], this.ja_title));
+      tr.append(this.#recordCell(cls[10], this.#recordLink(this.ja_url)));
+      tr.append(this.#recordCell(cls[11], this.ja_query));
+      tr.append(this.#recordCell(cls[12], this.ja_examples));
+      tr.append(this.#recordCell(cls[13], this.#recordLink(this.ja_updated_url, this.ja_updated)));
       return tr;
     }
 
@@ -462,6 +465,7 @@
         regex_a: Filter.regexFilters.en_title.elems.regex.value,
         regex_b: Filter.regexFilters.en_url.elems.regex.value,
         regex_bcd_en: Filter.regexFilters.en_query.elems.regex.value,
+        regex_examples_en: Filter.regexFilters.en_examples.elems.regex.value,
         regex_c: Filter.regexFilters.ja_title.elems.regex.value,
         regex_d: Filter.regexFilters.ja_url.elems.regex.value,
         regex_bcd_ja: Filter.regexFilters.ja_query.elems.regex.value,
@@ -470,6 +474,7 @@
         not_regex_a: Filter.regexFilters.en_title.elems.not_regex.value,
         not_regex_b: Filter.regexFilters.en_url.elems.not_regex.value,
         not_regex_bcd_en: Filter.regexFilters.en_query.elems.not_regex.value,
+        not_regex_examples_en: Filter.regexFilters.en_examples.elems.not_regex.value,
         not_regex_c: Filter.regexFilters.ja_title.elems.not_regex.value,
         not_regex_d: Filter.regexFilters.ja_url.elems.not_regex.value,
         not_regex_bcd_ja: Filter.regexFilters.ja_query.elems.not_regex.value,
@@ -495,6 +500,7 @@
       Filter.regexFilters.en_title.elems.regex.value = param.get('regex_a');
       Filter.regexFilters.en_url.elems.regex.value = param.get('regex_b');
       Filter.regexFilters.en_query.elems.regex.value = param.get('regex_bcd_en');
+      Filter.regexFilters.en_examples.elems.regex.value = param.get('regex_examples_en');
       Filter.regexFilters.ja_title.elems.regex.value = param.get('regex_c');
       Filter.regexFilters.ja_url.elems.regex.value = param.get('regex_d');
       Filter.regexFilters.ja_query.elems.regex.value = param.get('regex_bcd_ja');
@@ -503,6 +509,7 @@
       Filter.regexFilters.en_title.elems.not_regex.value = param.get('not_regex_a');
       Filter.regexFilters.en_url.elems.not_regex.value = param.get('not_regex_b');
       Filter.regexFilters.en_query.elems.not_regex.value = param.get('not_regex_bcd_en');
+      Filter.regexFilters.en_examples.elems.not_regex.value = param.get('not_regex_examples_en');
       Filter.regexFilters.ja_title.elems.not_regex.value = param.get('not_regex_c');
       Filter.regexFilters.ja_url.elems.not_regex.value = param.get('not_regex_d');
       Filter.regexFilters.ja_query.elems.not_regex.value = param.get('not_regex_bcd_ja');
