@@ -9,6 +9,7 @@ $ cd .repo
 
 $ git clone git@github.com:mdn/content.git
 $ git clone git@github.com:mdn/translated-content.git
+$ git clone git@github.com:mdn/interactive-examples.git
 
 $ cd ..
 ```

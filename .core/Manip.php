@@ -9,11 +9,13 @@ class Manip {
   protected $baseDir;
   protected $contentRepoDir;
   protected $translatedRepoDir;
+  protected $interactiveExamplesRepoDir;
   protected $enDir;
   protected $jaDir;
   protected $allJsonPath;
   protected $bcdJsonPath;
   protected $bcd;
+  protected $interactiveExamples;
 
   protected $debugSkip = false;
 
@@ -34,11 +36,13 @@ class Manip {
     $this->baseDir = dirname(__DIR__);
     $this->contentRepoDir = Util::concatPath($this->baseDir, '.repo/content');
     $this->translatedRepoDir = Util::concatPath($this->baseDir, '.repo/translated-content');
+    $this->interactiveExamplesRepoDir = Util::concatPath($this->baseDir, '.repo/interactive-examples');
     $this->enDir = Util::concatPath($this->contentRepoDir, 'files/en-us');
     $this->jaDir = Util::concatPath($this->translatedRepoDir, 'files/ja');
     $this->allJsonPath = Util::concatPath($this->baseDir, 'all.json');
     $this->bcdJsonPath = Util::concatPath($this->baseDir, 'bcd/bcd.json');
     $this->setBCD();
+    $this->setInteractiveExamples();
   }
 
   /**
@@ -57,6 +61,28 @@ class Manip {
   }
 
   /**
+   * interactive-examples リポジトリ内のデータを基に
+   * 有効な EmbedInteractiveExample のキーを $this->interactiveExample に展開する
+   */
+  protected function setInteractiveExamples() {
+    $this->interactiveExamples = [];
+
+    $cmd = Util::mycmd("find %s -name 'meta.json'", $this->interactiveExamplesRepoDir);
+    Util::myexec($cmd, $output);
+    if (count($output) === 0) {
+      throw new Exception(sprintf('[find interactiveExamples meta.json] find failed. (%s)', $this->interactiveExamplesRepoDir));
+    }
+    foreach ($output as $metaFile) {
+      $obj = Util::getJson($metaFile);
+      if (!isset($obj['pages'])) continue;
+      foreach ($obj['pages'] as $page) {
+        $key = sprintf('pages/%s/%s', $page['type'], $page['fileName']);
+        $this->interactiveExamples[$key] = true;
+      }
+    }
+  }
+
+  /**
    * エントリポイント
    */
   public function generateAllJson() {
@@ -64,6 +90,7 @@ class Manip {
       self::output('[start] git pull');
       $this->gitPull($this->contentRepoDir);
       $this->gitPull($this->translatedRepoDir);
+      $this->gitPull($this->interactiveExamplesRepoDir);
       self::output('[end] git pull');
     }
 
@@ -299,6 +326,33 @@ class Manip {
   }
 
   /**
+   * $this->interactiveExamples を基に $key が存在するかどうかを判定する
+   */
+  protected function validateInteractiveExample($key) {
+    return isset($this->interactiveExamples[$key]);
+  }
+
+  /**
+   * index.md の本文中の EmbedInteractiveExample の $key について
+   * invalid なものの具体値を配列にして返す
+   */
+  protected function getBadInteractiveExamples($line) {
+    $buf = Util::file_get_contents($line);
+
+    $ret = null;
+    if (preg_match_all('/{{EmbedInteractiveExample\("([^"]+)"/i', $buf, $m)) {
+      $ret = [];
+      foreach ($m[1] as $key) {
+        $valid = $this->validateInteractiveExample($key);
+        if (!$valid) $ret[] = $key;
+      }
+    }
+    if ($ret === null) return null;
+    if (count($ret) === 0) return false;
+    return $ret;
+  }
+
+  /**
    * 英語記事の情報を連想配列にして返す
    */
   protected function makeEnItem($line, &$en_nth) {
@@ -329,6 +383,7 @@ class Manip {
     $item['ja_title'] = $meta['title'] ?? '(untitled)';
     $item['ja_updated'] = $this->getJaUpdated($line);
     $item['ja_bad_bcd_queries'] = $this->getBadBcdQueries($line, $meta);
+    $item['ja_bad_interactive_examples'] = $this->getBadInteractiveExamples($line);
 
     return $item;
   }
