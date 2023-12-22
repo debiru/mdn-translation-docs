@@ -1,4 +1,5 @@
 <?php
+function cache_buster($file) { $systemPath = __DIR__ . '/' . $file; return sprintf('%s?%s', $file, filemtime($systemPath)); }
 function esc_html($str, $flags = ENT_QUOTES) { if (is_null($str)) return null; return htmlspecialchars($str, $flags, 'UTF-8'); }
 function output($str) { echo esc_html($str); }
 ?>
@@ -7,8 +8,8 @@ function output($str) { echo esc_html($str); }
   <head>
     <meta charset="UTF-8" />
     <title>MDN翻訳ステータス一覧表</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="<?php output(cache_buster('style.css')); ?>" />
+    <script src="<?php output(cache_buster('script.js')); ?>"></script>
   </head>
   <body>
     <header>
@@ -60,6 +61,7 @@ function output($str) { echo esc_html($str); }
           <th class="ja-url url">ja-url</th>
           <th class="ja-query query">ja-bad-bcd-queries</th>
           <th class="ja-examples query">ja-bad-interactive-examples</th>
+          <th class="ja-samples query">ja-bad-live-samples</th>
           <th class="ja-updated date">ja-updated</th>
         </tr>
       </thead>

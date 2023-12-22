@@ -353,6 +353,76 @@ class Manip {
   }
 
   /**
+   * $ids を基に $key が存在するかどうかを判定する
+   */
+  protected function validateLiveSample($key, $ids, $headingLevel, $hasCode, $hasContentH3) {
+    if (isset($ids[strtolower($key)])) return true;
+    if ($hasCode) return true;
+    if ($hasContentH3 === false && $headingLevel >= 4) return false;
+    if ($headingLevel <= 4) return true;
+    return false;
+  }
+
+  /**
+   * index.md の本文中の EmbedLiveSample の $key について
+   * invalid なものの具体値を配列にして返す
+   */
+  protected function getBadLiveSamples($filePath) {
+    $buf = Util::file_get_contents($filePath);
+
+    $ids = [];
+    if (preg_match_all('/^#+\s*([^\n]+)/m', $buf, $m)) {
+      foreach ($m[1] as $heading) {
+        $id = preg_replace('/ /', '_', strtolower($heading));
+        $id = preg_replace('/[\(\):]/', '', $id);
+        $ids[$id] = true;
+      }
+    }
+    if (preg_match_all('/\sid="([^"]+)"/', $buf, $m)) {
+      foreach ($m[1] as $id) {
+        $ids[strtolower($id)] = true;
+      }
+    }
+
+    $ret = null;
+    $lines = explode(PHP_EOL, $buf);
+    $headingLevel = 0;
+    $hasHtml = false;
+    $hasCss = false;
+    $hasContentH3 = false;
+    foreach ($lines as $line) {
+      if (preg_match('/^(##+)/', $line, $m)) {
+        $level = strlen($m[1]);
+        if ($headingLevel > $level) $hasContentH3 = false;
+        $headingLevel = $level;
+        $hasHtml = false;
+        $hasCss = false;
+      }
+      elseif ($headingLevel === 3) {
+        if (preg_match('/\S.*/', $line, $m)) {
+          $hasContentH3 = true;
+        }
+      }
+      if (preg_match('/^```html/', $line, $m)) {
+        $hasHtml = true;
+      }
+      if (preg_match('/^```css/', $line, $m)) {
+        $hasCss = true;
+      }
+      if (preg_match_all('/{{\s*EmbedLiveSample\([\'"]([^\'"]+)/i', $line, $m)) {
+        if ($ret === null) $ret = [];
+        foreach ($m[1] as $key) {
+          $valid = $this->validateLiveSample($key, $ids, $headingLevel, $hasHtml && $hasCss, $hasContentH3);
+          if (!$valid) $ret[] = $key;
+        }
+      }
+    }
+    if ($ret === null) return null;
+    if (count($ret) === 0) return false;
+    return $ret;
+  }
+
+  /**
    * 英語記事の情報を連想配列にして返す
    */
   protected function makeEnItem($line, &$en_nth) {
@@ -385,6 +455,7 @@ class Manip {
     $item['ja_updated'] = $this->getJaUpdated($line);
     $item['ja_bad_bcd_queries'] = $this->getBadBcdQueries($line, $meta);
     $item['ja_bad_interactive_examples'] = $this->getBadInteractiveExamples($line);
+    $item['ja_bad_live_samples'] = $this->getBadLiveSamples($line);
 
     return $item;
   }

@@ -137,6 +137,7 @@
       this.regexFilters.ja_url = new RegexFilter('ja-url');
       this.regexFilters.ja_query = new RegexFilter('ja-query');
       this.regexFilters.ja_examples = new RegexFilter('ja-examples');
+      this.regexFilters.ja_samples = new RegexFilter('ja-samples');
 
       this.radioFilters.ja_nth = new RadioFilter('ja-nth', ['all', 'ja', 'not ja', 'not en', 'en']);
     }
@@ -308,6 +309,7 @@
 
       this.en_examples = scanQuery(record.en_bad_interactive_examples);
       this.ja_examples = scanQuery(record.ja_bad_interactive_examples);
+      this.ja_samples = scanQuery(record.ja_bad_live_samples);
 
       this.tr = this.#recordRow();
     }
@@ -344,7 +346,8 @@
       tr.append(this.#recordCell(cls[10], this.#recordLink(this.ja_url)));
       tr.append(this.#recordCell(cls[11], this.ja_query));
       tr.append(this.#recordCell(cls[12], this.ja_examples));
-      tr.append(this.#recordCell(cls[13], this.#recordLink(this.ja_updated_url, this.ja_updated)));
+      tr.append(this.#recordCell(cls[13], this.ja_samples));
+      tr.append(this.#recordCell(cls[14], this.#recordLink(this.ja_updated_url, this.ja_updated)));
       return tr;
     }
 
@@ -470,6 +473,7 @@
         regex_d: Filter.regexFilters.ja_url.elems.regex.value,
         regex_bcd_ja: Filter.regexFilters.ja_query.elems.regex.value,
         regex_examples_ja: Filter.regexFilters.ja_examples.elems.regex.value,
+        regex_samples_ja: Filter.regexFilters.ja_samples.elems.regex.value,
         not_regex_meta: Filter.regexFilters.en_meta.elems.not_regex.value,
         not_regex_a: Filter.regexFilters.en_title.elems.not_regex.value,
         not_regex_b: Filter.regexFilters.en_url.elems.not_regex.value,
@@ -479,6 +483,7 @@
         not_regex_d: Filter.regexFilters.ja_url.elems.not_regex.value,
         not_regex_bcd_ja: Filter.regexFilters.ja_query.elems.not_regex.value,
         not_regex_examples_ja: Filter.regexFilters.ja_examples.elems.not_regex.value,
+        not_regex_samples_ja: Filter.regexFilters.ja_samples.elems.not_regex.value,
       };
       return this.assocToURL(assoc);
     }
@@ -505,6 +510,7 @@
       Filter.regexFilters.ja_url.elems.regex.value = param.get('regex_d');
       Filter.regexFilters.ja_query.elems.regex.value = param.get('regex_bcd_ja');
       Filter.regexFilters.ja_examples.elems.regex.value = param.get('regex_examples_ja');
+      Filter.regexFilters.ja_samples.elems.regex.value = param.get('regex_samples_ja');
       Filter.regexFilters.en_meta.elems.not_regex.value = param.get('not_regex_meta');
       Filter.regexFilters.en_title.elems.not_regex.value = param.get('not_regex_a');
       Filter.regexFilters.en_url.elems.not_regex.value = param.get('not_regex_b');
@@ -514,6 +520,7 @@
       Filter.regexFilters.ja_url.elems.not_regex.value = param.get('not_regex_d');
       Filter.regexFilters.ja_query.elems.not_regex.value = param.get('not_regex_bcd_ja');
       Filter.regexFilters.ja_examples.elems.not_regex.value = param.get('not_regex_examples_ja');
+      Filter.regexFilters.ja_samples.elems.not_regex.value = param.get('not_regex_samples_ja');
     }
   }
 
