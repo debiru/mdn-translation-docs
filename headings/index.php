@@ -2,13 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>MDN - BCD一覧表</title>
+    <title>MDN - Headings 一覧表</title>
     <link rel="stylesheet" href="style.css" />
     <script src="script.js"></script>
   </head>
   <body>
     <header>
-      <h1><a href="/">MDN - BCD一覧表</a></h1>
+      <h1><a href="/">MDN - Headings 一覧表</a></h1>
       <ul>
         <li><a href="https://mdn.lavoscore.org/">MDN翻訳ステータス一覧表</a>の関連ツールです。
           <ul>
@@ -23,14 +23,8 @@
       <thead>
         <tr id="labels">
           <th class="count num">#</th>
-          <th class="bcdQuery">BCD Query</th>
-          <th class="url">URL</th>
-          <th class="chrome browser">Chrome</th>
-          <th class="edge browser">Edge</th>
-          <th class="firefox browser">Firefox</th>
-          <th class="opera browser">Opera</th>
-          <th class="safari browser">Safari</th>
-          <th class="safari_ios browser">iOS Safari</th>
+          <th class="headingKey">見出し文言（英語）</th>
+          <th class="headingValues">対応する翻訳文言（日本語）</th>
         </tr>
       </thead>
     </table></main>

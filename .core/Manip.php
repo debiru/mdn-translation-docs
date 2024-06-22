@@ -2,6 +2,7 @@
 require_once(__DIR__.'/vendor/autoload.php');
 require_once(__DIR__.'/Util.php');
 require_once(__DIR__.'/BCD.php');
+require_once(__DIR__.'/Headings.php');
 
 use \Symfony\Component\Yaml\Yaml as Yaml;
 
@@ -14,6 +15,7 @@ class Manip {
   protected $jaDir;
   protected $allJsonPath;
   protected $bcdJsonPath;
+  protected $headingsJsonPath;
   protected $bcd;
   protected $interactiveExamples;
 
@@ -41,6 +43,7 @@ class Manip {
     $this->jaDir = Util::concatPath($this->translatedRepoDir, 'files/ja');
     $this->allJsonPath = Util::concatPath($this->baseDir, 'all.json');
     $this->bcdJsonPath = Util::concatPath($this->baseDir, 'bcd/bcd.json');
+    $this->headingsJsonPath = Util::concatPath($this->baseDir, 'headings/headings.json');
     $this->setBCD();
     $this->setInteractiveExamples();
   }
@@ -101,6 +104,10 @@ class Manip {
     $bcdResult = BCD::getResult($this->bcd);
     Util::setJson($this->bcdJsonPath, $bcdResult);
     self::output('*** Generated bcd.json ***');
+
+    $headingsResult = Headings::getResult($jsonObject, $this->enDir, $this->jaDir);
+    Util::setJson($this->headingsJsonPath, $headingsResult);
+    self::output('*** Generated headings.json ***');
   }
 
   /**
@@ -182,6 +189,11 @@ class Manip {
    * makeIndexList を基に all.json を構築する
    */
   protected function makeJsonObject() {
+    if ($this->debugSkip) {
+      $result = Util::getJson($this->allJsonPath);
+      if ($result != null) return $result;
+    }
+
     self::output('[start] makeJsonObject');
 
     $en = $this->makeIndexList($this->enDir);
