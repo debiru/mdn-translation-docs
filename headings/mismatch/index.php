@@ -17,6 +17,7 @@
             <li><a href="https://mdn-headings.lavoscore.org/mismatch/">Headings 不一致リスト一覧表</a></li>
           </ul>
         </li>
+        <li>英語版と日本語版で見出しの構造（見出しの個数、見出しのレベル）が一致していないページリストです。</li>
       </ul>
     </header>
     <main id="tableWrapper"><table id="table">
