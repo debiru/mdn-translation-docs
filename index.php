@@ -43,7 +43,9 @@ function output($str) { echo esc_html($str); }
             <li>（2023/2/2）title を実際の URL アクセスの結果ではなく index.md から抽出するようにしました。</li>
             <li>（2023/2/2）ソースコードを公開しました。<a href="https://github.com/debiru/mdn-translation-docs">https://github.com/debiru/mdn-translation-docs</a></li>
             <li>（2023/3/18）<a href="https://github.com/mdn/mdn/issues/262">en-tags が削除された</a>ので代わりに en-meta を追加しました。title, slug, browser-compat 以外のキーを表示しています。</li>
+            <li>（2023/12/7）BCD一覧表を公開しました。</li>
             <li>（2023/12/11）(en/ja)-bad-interactive-examples を追加しました。</li>
+            <li>（2024/6/23）Headings 一覧表と Headings 不一致リスト一覧表を公開しました。</li>
           </ul>
         </li>
         <li>一覧表の元となる<a href="all.json">JSONデータはこちら</a>です。</li>
