@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <h1><a href="/">MDN - Headings 不一致リスト一覧表</a></h1>
+      <h1><a href="/mismatch/">MDN - Headings 不一致リスト一覧表</a></h1>
       <ul>
         <li><a href="https://mdn.lavoscore.org/">MDN翻訳ステータス一覧表</a>の関連ツールです。
           <ul>
